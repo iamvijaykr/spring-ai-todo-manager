@@ -105,13 +105,51 @@ docker compose up --build
 
 Stop the containers with `Ctrl+C`, then run `docker compose down`. Tasks are temporary and are lost when the Java server stops.
 
-## What happens behind the scenes
+## How the code is organized
 
-When you add or change a task, the website sends it to the Java program, which saves it and sends the result back. When you ask for AI suggestions, the program sends task titles, descriptions, and completion states to OpenAI, then shows the reply on the website.
+| Location | What it does |
+| --- | --- |
+| `frontend/src/app/app.html` | Shows the task form, task list, and AI suggestions. |
+| `frontend/src/app/app.ts` | Handles button clicks, loading, saving, and errors on the page. |
+| `frontend/src/app/app.css` | Controls the appearance of the page. |
+| `frontend/src/app/todo-api.service.ts` | Sends task and AI requests from the website to the Java program. |
+| `backend/todo-app/` | Starts the Java program and receives requests from the website. |
+| `backend/todo-domain/` | Defines a task and its basic rules. |
+| `backend/todo-application/` | Handles task actions and describes the information AI should return. |
+| `backend/todo-infrastructure/` | Saves and reads tasks, and connects to OpenAI. |
 
-Do not use the AI helper with task details you do not want to share with OpenAI. Tasks are stored temporarily and are cleared when the Java program stops.
+The backend has three main request handlers:
 
-See [How it works](./docs/how-it-works.md) for a step-by-step explanation.
+- `HomeController` answers when you open the Java program's home address.
+- `TodoController` handles adding, listing, changing, and removing tasks.
+- `TodoAiController` handles requests for AI suggestions.
+
+## How a task is saved
+
+When you add, change, finish, or remove a task:
+
+1. The page in `app.html` collects your input.
+2. `app.ts` handles your action.
+3. `TodoApiService` sends it to the Java program.
+4. `TodoController` receives it, and `TodoService` carries out the requested task action.
+5. The storage code saves or reads the task.
+6. The Java program returns the result, and the website updates the list.
+
+The task is stored in memory, not in a permanent file or database. It is lost when the Java program stops.
+
+When running locally, `frontend/proxy.conf.json` forwards website requests to the Java program. With Docker, `frontend/nginx.conf` sends those requests between the two containers.
+
+## How AI suggestions are made
+
+1. You select **Give me some ideas**.
+2. `TodoApiService` asks `TodoAiController` for suggestions.
+3. `TodoAiController` gets the current task list and passes it to `SpringAiTodoAssistant`.
+4. `SpringAiTodoAssistant` sends the task titles, descriptions, and done status to OpenAI.
+5. The answer comes back to the website as a summary and up to three suggestions.
+
+If there are no tasks, the Java program suggests creating one without contacting OpenAI. For other AI requests, a valid OpenAI key is required. Do not use the AI helper with task details you do not want to share with OpenAI.
+
+For a fuller explanation, see [How it works](./docs/how-it-works.md).
 
 ## If something does not work
 
