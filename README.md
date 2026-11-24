@@ -8,7 +8,7 @@ The website and the Java server are kept in separate folders. Start them in two 
 
 - Java 21 or newer.
 - Maven 3.6.3 or newer.
-- Node.js 20.19 or newer, with npm.
+- Node.js 20.19+, 22.12+, or 24+, with npm.
 - An OpenAI key if you want to use the AI helper.
 
 Check that Java, Maven, and Node.js are available:
