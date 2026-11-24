@@ -1,16 +1,16 @@
-# Java server guide
+# Java program guide
 
-The server accepts requests from the website, checks them, and saves tasks. It can also send the task list to OpenAI when someone asks for AI suggestions.
+The Java program is the part that receives tasks from the website and saves them. It can also ask OpenAI for a summary and suggestions.
 
-## Start the server on your computer
+## Start it on your computer
 
-From the project folder, build and test the server:
+Open a terminal in the main project folder—the one containing the top-level README—and prepare the program:
 
 ```bash
 mvn -pl backend/todo-app -am package
 ```
 
-AI is optional. Before starting the server, set `OPENAI_API_KEY` in the same terminal if you want AI suggestions.
+To use AI, set your OpenAI key in that same terminal. This step is optional.
 
 **Windows PowerShell:**
 
@@ -24,17 +24,30 @@ $env:OPENAI_API_KEY = "your-key"
 export OPENAI_API_KEY="your-key"
 ```
 
-Start the server:
+Start the program:
 
 ```bash
 java -jar backend/todo-app/target/todo-app-0.0.1-SNAPSHOT.jar
 ```
 
-Keep the terminal open. The server uses port `8080`. Its first page is [http://localhost:8080](http://localhost:8080).
+Keep the terminal open. The program uses port `8080`. Open [http://localhost:8080](http://localhost:8080) to check that it started.
 
-## Request examples
+## Task addresses
 
-Add a task:
+The website uses these addresses automatically. You can also use them to test the Java program directly.
+
+| Action | Address |
+| --- | --- |
+| See all tasks | `GET /api/todos` |
+| See one task | `GET /api/todos/{id}` |
+| Add a task | `POST /api/todos` |
+| Change a task | `PUT /api/todos/{id}` |
+| Remove a task | `DELETE /api/todos/{id}` |
+| Get AI suggestions | `POST /api/ai/todos/insights` |
+
+`GET` means read, `POST` means add or ask, `PUT` means change, and `DELETE` means remove. Replace `{id}` with the task's ID.
+
+Example: add a task
 
 ```bash
 curl -X POST http://localhost:8080/api/todos \
@@ -42,32 +55,21 @@ curl -X POST http://localhost:8080/api/todos \
   -d '{"title":"Plan the week","description":"Review my priorities","completed":false}'
 ```
 
-Ask for a summary and suggestions:
+Example: ask for AI suggestions
 
 ```bash
 curl -X POST http://localhost:8080/api/ai/todos/insights
 ```
 
-The AI request needs a valid OpenAI key. It sends task titles, descriptions, and completion states to OpenAI. Avoid putting private information in tasks if you use this feature.
+On Windows PowerShell, use `curl.exe` instead of `curl`. AI suggestions need a valid OpenAI key. The task title, description, and done status are sent to OpenAI when you ask for suggestions.
 
-On Windows PowerShell, use `curl.exe` instead of `curl`.
+## Where server code lives
 
-## Available addresses
+- `todo-app/` starts the Java program and receives requests.
+- `todo-domain/` describes what a task is.
+- `todo-application/` handles adding, changing, finding, and removing tasks.
+- `todo-infrastructure/` saves tasks and connects to OpenAI.
 
-| Method | Address | What it does |
-| --- | --- | --- |
-| `GET` | `/api/todos` | Show every task. |
-| `GET` | `/api/todos/{id}` | Show one task. |
-| `POST` | `/api/todos` | Add a task. |
-| `PUT` | `/api/todos/{id}` | Change a task. |
-| `DELETE` | `/api/todos/{id}` | Remove a task. |
-| `POST` | `/api/ai/todos/insights` | Get a summary and up to three suggestions. |
+The saved tasks are temporary. They are cleared when the Java program stops.
 
-## Server folders
-
-- `todo-app` starts the server and defines the addresses it accepts.
-- `todo-domain` defines what a task contains.
-- `todo-application` handles task actions and describes what the server needs from storage and AI.
-- `todo-infrastructure` saves tasks and connects to OpenAI.
-
-See [how the parts work together](../docs/how-it-works.md) for the full request path.
+For the full path a task takes, see [How it works](../docs/how-it-works.md).

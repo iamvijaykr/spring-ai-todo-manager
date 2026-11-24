@@ -1,39 +1,40 @@
 # Website guide
 
-The Angular website is in this folder. It lets you add, edit, finish, filter, and remove tasks, and request a summary and suggestions from the server.
+The website is the part you open in your browser. It lets you add, change, finish, filter, and remove tasks, and request AI suggestions.
 
-## Start the website on your computer
+## Start the website
 
-Start the Java server first by following the [server guide](../backend/README.md). Then open a second terminal in this folder and run:
+Start the Java program first by following the [Java program guide](../backend/README.md). Then open a second terminal, move into this folder, and run:
 
 ```bash
 npm ci
 npm start
 ```
 
-Open [http://localhost:4200](http://localhost:4200). Keep both the website and server terminals open while you use the app.
+Open [http://localhost:4200](http://localhost:4200). Keep both terminals open while you use the app.
 
-The website sends requests to `http://localhost:8080` through [`proxy.conf.json`](./proxy.conf.json). You do not need to set up a separate connection.
+The website sends requests to the Java program on port `8080` automatically.
 
-## Main files
+## Change the website
 
-- `src/app/app.ts`, `app.html`, and `app.css` control the page, its content, and its appearance.
-- `src/app/todo-api.service.ts` sends task and AI requests to the Java server.
-- `src/app/app.spec.ts` checks that the page loads.
-- `src/styles.css` contains styles used across the page.
+- `src/app/app.html` contains the words and layout.
+- `src/app/app.css` and `src/styles.css` control how it looks.
+- `src/app/app.ts` controls what the page does.
+- `src/app/todo-api.service.ts` sends task and AI requests to the Java program.
+- `src/app/app.spec.ts` contains the website check.
 
-## Check the website
+## Check your changes
 
-Build it:
+Build the website:
 
 ```bash
 npm run build
 ```
 
-Run its tests:
+Run the website check:
 
 ```bash
 npm test
 ```
 
-The tests open Chrome, so install Chrome before running them.
+The check opens Chrome, so Chrome must be installed.
