@@ -46,3 +46,5 @@ npm run build
 Run website tests with `npm test`. Chrome must be installed for these tests.
 
 To try the whole app, start the server as described in the main `README.md`, then run `npm start` from `frontend/`. Open `http://localhost:4200`; the server uses `http://localhost:8080`.
+
+To build and start both Docker images, run `docker compose up --build` from the project folder. Check the main `README.md` for optional OpenAI key setup and how to stop the containers.

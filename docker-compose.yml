@@ -1,0 +1,20 @@
+services:
+  backend:
+    image: todo-flow-backend:local
+    build:
+      context: .
+      dockerfile: backend/todo-app/Dockerfile
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-not-configured}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+
+  frontend:
+    image: todo-flow-frontend:local
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-4200}:80"

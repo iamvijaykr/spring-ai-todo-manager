@@ -2,6 +2,8 @@
 
 Todo Flow has a website and a Java program. The website is what you see; the Java program saves the tasks and handles requests from the website.
 
+You can run these parts directly on your computer or start them together with Docker. With Docker, the website and Java program run in separate containers and Docker connects them.
+
 ## When you add or change a task
 
 1. You enter a task or click a button on the website.

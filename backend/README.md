@@ -32,6 +32,16 @@ java -jar backend/todo-app/target/todo-app-0.0.1-SNAPSHOT.jar
 
 Keep the terminal open. The program uses port `8080`. Open [http://localhost:8080](http://localhost:8080) to check that it started.
 
+## Start both parts with Docker
+
+From the main project folder, run:
+
+```bash
+docker compose up --build
+```
+
+This builds and starts the website and Java program together. Set `OPENAI_API_KEY` in the terminal first if you want AI suggestions. The [main guide](../README.md#run-both-parts-with-docker) has Windows, macOS, and Linux examples.
+
 ## Task addresses
 
 The website uses these addresses automatically. You can also use them to test the Java program directly.

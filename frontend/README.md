@@ -15,6 +15,16 @@ Open [http://localhost:4200](http://localhost:4200). Keep both terminals open wh
 
 The website sends requests to the Java program on port `8080` automatically.
 
+## Run both parts with Docker
+
+From the main project folder, run:
+
+```bash
+docker compose up --build
+```
+
+Open [http://localhost:4200](http://localhost:4200). Docker sends website requests to the Java program automatically. To use AI, set `OPENAI_API_KEY` before starting Docker. See the [main guide](../README.md#run-both-parts-with-docker) for examples.
+
 ## Change the website
 
 - `src/app/app.html` contains the words and layout.

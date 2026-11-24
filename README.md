@@ -77,6 +77,34 @@ Leave this terminal open too. Open [http://localhost:4200](http://localhost:4200
 
 The website contacts the Java program automatically. You do not need to configure a connection.
 
+## Run both parts with Docker
+
+Install Docker Desktop (or Docker Engine with Docker Compose). From the main project folder, run:
+
+```bash
+docker compose up --build
+```
+
+Docker builds a website image and a Java server image, then starts both. Open [http://localhost:4200](http://localhost:4200). The Java server is also available at [http://localhost:8080](http://localhost:8080).
+
+To use AI, set `OPENAI_API_KEY` before running the command.
+
+**Windows PowerShell:**
+
+```powershell
+$env:OPENAI_API_KEY = "your-key"
+docker compose up --build
+```
+
+**macOS or Linux:**
+
+```bash
+export OPENAI_API_KEY="your-key"
+docker compose up --build
+```
+
+Stop the containers with `Ctrl+C`, then run `docker compose down`. Tasks are temporary and are lost when the Java server stops.
+
 ## What happens behind the scenes
 
 When you add or change a task, the website sends it to the Java program, which saves it and sends the result back. When you ask for AI suggestions, the program sends task titles, descriptions, and completion states to OpenAI, then shows the reply on the website.
