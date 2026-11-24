@@ -20,10 +20,10 @@
     <description>Modular Spring Boot todo manager with Spring AI</description>
 
     <modules>
-        <module>todo-domain</module>
-        <module>todo-application</module>
-        <module>todo-infrastructure</module>
-        <module>todo-app</module>
+        <module>backend/todo-domain</module>
+        <module>backend/todo-application</module>
+        <module>backend/todo-infrastructure</module>
+        <module>backend/todo-app</module>
     </modules>
 
     <properties>

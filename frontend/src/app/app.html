@@ -1,0 +1,183 @@
+<div class="page-shell">
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Todo Flow home">
+      <span class="brand-mark" aria-hidden="true">✓</span>
+      <span>todo<span class="brand-light">flow</span></span>
+    </a>
+    <div class="topbar-note"><span class="status-dot"></span> Your personal workspace</div>
+  </header>
+
+  <main class="dashboard">
+    <section class="intro">
+      <div>
+        <p class="eyebrow">A LITTLE MORE FOCUS</p>
+        <h1>Make room for<br /><span>what matters.</span></h1>
+        <p class="intro-copy">A clear list. A calmer mind. One thing at a time.</p>
+      </div>
+      <div class="date-chip">{{ today | date:'EEEE, MMMM d' }}</div>
+    </section>
+
+    <section class="stats" aria-label="Todo overview">
+      <article class="stat-card">
+        <span class="stat-label">On your list</span>
+        <strong>{{ todos.length }}</strong>
+        <span class="stat-foot">tasks in total</span>
+      </article>
+      <article class="stat-card stat-card-accent">
+        <span class="stat-label">In progress</span>
+        <strong>{{ activeCount }}</strong>
+        <span class="stat-foot">ready when you are</span>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Done and dusted</span>
+        <strong>{{ completedCount }}</strong>
+        <span class="stat-foot">small wins count</span>
+      </article>
+    </section>
+
+    <div class="content-grid">
+      <section class="list-column">
+        <section class="composer card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">CAPTURE A THOUGHT</p>
+              <h2>What needs doing?</h2>
+            </div>
+            <span class="plus-mark" aria-hidden="true">+</span>
+          </div>
+          <form (ngSubmit)="createTodo()">
+            <label class="sr-only" for="todo-title">Todo title</label>
+            <input
+              id="todo-title"
+              name="title"
+              [(ngModel)]="newTitle"
+              maxlength="255"
+              placeholder="e.g. Prepare the project update"
+              required
+            />
+            <label class="sr-only" for="todo-description">Description (optional)</label>
+            <textarea
+              id="todo-description"
+              name="description"
+              [(ngModel)]="newDescription"
+              maxlength="2000"
+              rows="2"
+              placeholder="Add a few details to make it easier to start..."
+            ></textarea>
+            <div class="composer-footer">
+              <span class="helper-text">Keep it simple. You can add details later.</span>
+              <button class="button button-primary" type="submit" [disabled]="saving || !newTitle.trim()">
+                {{ saving ? 'Adding...' : 'Add to my list' }} <span aria-hidden="true">↗</span>
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="todo-section">
+          <div class="list-heading">
+            <div>
+              <p class="eyebrow">YOUR SPACE</p>
+              <h2>Today’s list <span class="count-pill">{{ todos.length }}</span></h2>
+            </div>
+            <div class="filters" aria-label="Filter todos">
+              <button type="button" [class.active]="filter === 'all'" (click)="filter = 'all'">All</button>
+              <button type="button" [class.active]="filter === 'active'" (click)="filter = 'active'">To do</button>
+              <button type="button" [class.active]="filter === 'completed'" (click)="filter = 'completed'">Done</button>
+            </div>
+          </div>
+
+          @if (error) {
+            <div class="alert" role="alert">{{ error }}</div>
+          }
+
+          @if (loading) {
+            <div class="loading-state"><span class="spinner"></span> Getting your list ready...</div>
+          } @else if (visibleTodos.length === 0) {
+            <div class="empty-state card">
+              <span class="empty-icon" aria-hidden="true">✳</span>
+              <h3>{{ todos.length === 0 ? 'A fresh start.' : 'Nothing here right now.' }}</h3>
+              <p>{{ todos.length === 0 ? 'Add your first todo above and take it from there.' : 'Try another filter to see more tasks.' }}</p>
+            </div>
+          } @else {
+            <div class="todo-list">
+              @for (todo of visibleTodos; track todo.id) {
+                <article class="todo-item card" [class.is-complete]="todo.completed">
+                  @if (editingId === todo.id) {
+                    <form class="edit-form" (ngSubmit)="saveEdit(todo)">
+                      <input name="editTitle" [(ngModel)]="editTitle" maxlength="255" required aria-label="Edit todo title" />
+                      <textarea name="editDescription" [(ngModel)]="editDescription" maxlength="2000" rows="2" aria-label="Edit todo description"></textarea>
+                      <div class="item-actions">
+                        <button class="text-button" type="button" (click)="cancelEditing()">Cancel</button>
+                        <button class="button button-small button-primary" type="submit">Save changes</button>
+                      </div>
+                    </form>
+                  } @else {
+                    <label class="check-wrap" [attr.aria-label]="todo.completed ? 'Mark todo incomplete' : 'Mark todo complete'">
+                      <input type="checkbox" [checked]="todo.completed" (change)="setCompleted(todo, $event)" />
+                      <span class="custom-check"></span>
+                    </label>
+                    <div class="todo-copy">
+                      <h3>{{ todo.title }}</h3>
+                      @if (todo.description) {
+                        <p>{{ todo.description }}</p>
+                      }
+                      <span class="todo-date">Added {{ todo.createdAt | date:'MMM d' }}</span>
+                    </div>
+                    <div class="item-actions">
+                      <button class="icon-button" type="button" (click)="startEditing(todo)" [attr.aria-label]="'Edit ' + todo.title" title="Edit">Edit</button>
+                      <button class="icon-button danger" type="button" (click)="deleteTodo(todo)" [attr.aria-label]="'Delete ' + todo.title" title="Delete">Delete</button>
+                    </div>
+                  }
+                </article>
+              }
+            </div>
+          }
+        </section>
+      </section>
+
+      <aside class="ai-card">
+        <div class="ai-card-top">
+          <span class="ai-icon" aria-hidden="true">✳</span>
+          <span class="ai-label">YOUR AI SIDEKICK</span>
+        </div>
+        <h2>A fresh perspective<br />on your list.</h2>
+        <p class="ai-description">Get a quick summary and a few thoughtful suggestions for what to tackle next.</p>
+        <button class="button button-ai" type="button" (click)="generateInsights()" [disabled]="aiLoading">
+          @if (aiLoading) {
+            <span class="spinner spinner-light"></span> Thinking...
+          } @else {
+            ✦ Give me some ideas
+          }
+        </button>
+
+        @if (aiError) {
+          <p class="ai-error" role="alert">{{ aiError }}</p>
+        }
+        @if (insights) {
+          <div class="insights" aria-live="polite">
+            <div class="insight-block">
+              <span class="insight-label">THE BIG PICTURE</span>
+              <p>{{ insights.summary }}</p>
+            </div>
+            <div class="insight-block">
+              <span class="insight-label">A GOOD NEXT STEP</span>
+              <ul>
+                @for (suggestion of insights.suggestions; track $index) {
+                  <li>{{ suggestion }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+        } @else if (!aiError && !aiLoading) {
+          <div class="ai-hint">
+            <span aria-hidden="true">✧</span>
+            <p>Small steps add up. Let AI help you find yours.</p>
+          </div>
+        }
+        <p class="ai-footnote">Powered by Spring AI</p>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer">Made for progress, not perfection.</footer>
+</div>
